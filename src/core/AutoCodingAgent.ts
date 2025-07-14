@@ -52,6 +52,10 @@ Return a JSON object with this structure:
 }`;
 
     try {
+      if (!idea || idea.trim().length < 10) {
+        throw new Error('Please provide a more detailed description (at least 10 characters)');
+      }
+
       const result = await this.model.generateContent(prompt);
       const response = result.response.text();
       const jsonMatch = response.match(/```json\n([\s\S]*?)\n```/);
@@ -61,12 +65,13 @@ Return a JSON object with this structure:
       }
       
       // Try to parse the whole response if no code block
-      return JSON.parse(response);
+      const cleanResponse = response.replace(/^[^{]*/, '').replace(/[^}]*$/, '');
+      return JSON.parse(cleanResponse);
     } catch (error) {
       console.error('Error creating pitch:', error);
-      // Return a default pitch
+      // Return a default pitch with better error handling
       return {
-        title: idea.substring(0, 50),
+        title: idea.substring(0, 50) || 'Untitled Project',
         description: `A web application based on: ${idea}`,
         targetAudience: 'General users',
         keyFeatures: ['Core functionality', 'User-friendly interface', 'Responsive design'],

@@ -35,12 +35,13 @@ export class IdeaInput extends LitElement {
       font-size: 1rem;
       font-family: inherit;
       resize: vertical;
-      transition: border-color 0.3s;
+      transition: all 0.3s;
     }
 
     textarea:focus {
       outline: none;
       border-color: #00ff41;
+      box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.1);
     }
 
     textarea:disabled {
@@ -72,9 +73,30 @@ export class IdeaInput extends LitElement {
       box-shadow: 0 4px 12px rgba(0, 255, 65, 0.4);
     }
 
+    button:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+
+    .char-count.warning {
+      color: #ff9900;
     }
   `;
 
@@ -87,7 +109,10 @@ export class IdeaInput extends LitElement {
           placeholder="Describe your app idea in detail..."
           ?disabled=${this.disabled}
           @keydown=${this._handleKeydown}
+          @input=${this._handleInput}
+          maxlength="500"
         ></textarea>
+        <div class="char-count" id="char-count">0 / 500</div>
         <div class="examples">
           Examples: "A todo list with drag and drop", "A memory card game", 
           "A markdown editor with live preview", "A pomodoro timer with statistics"
@@ -108,17 +133,41 @@ export class IdeaInput extends LitElement {
     }
   }
 
+  private _handleInput(e: Event) {
+    const textarea = e.target as HTMLTextAreaElement;
+    const charCount = this.shadowRoot?.querySelector('#char-count');
+    if (charCount) {
+      const count = textarea.value.length;
+      charCount.textContent = `${count} / 500`;
+      charCount.classList.toggle('warning', count > 450);
+    }
+  }
+
   private _handleSubmit() {
     const textarea = this.shadowRoot?.querySelector('textarea') as HTMLTextAreaElement;
     const idea = textarea?.value.trim();
     
-    if (idea) {
-      this.dispatchEvent(new CustomEvent('idea-submitted', {
-        detail: { idea },
-        bubbles: true,
-        composed: true
-      }));
+    if (!idea) {
+      // Shake the textarea if empty
+      textarea.style.animation = 'shake 0.5s ease-in-out';
+      setTimeout(() => {
+        textarea.style.animation = '';
+      }, 500);
+      textarea.focus();
+      return;
     }
+
+    if (idea.length < 10) {
+      alert('Please provide a more detailed description (at least 10 characters)');
+      textarea.focus();
+      return;
+    }
+
+    this.dispatchEvent(new CustomEvent('idea-submitted', {
+      detail: { idea },
+      bubbles: true,
+      composed: true
+    }));
   }
 }
 

@@ -36,6 +36,15 @@ export class DeploymentStatus extends LitElement {
       50% { transform: translateY(-10px); }
     }
 
+    .pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
     h3 {
       color: #00ff41;
       font-size: 1.5rem;
@@ -158,7 +167,7 @@ export class DeploymentStatus extends LitElement {
         <p class="status-message">${statusConfig.message}</p>
         
         ${this.status === 'completed' && this.url ? html`
-          <div class="deployment-url">
+          <div class="deployment-url pulse">
             <a href=${this.url} target="_blank">${this.url}</a>
           </div>
           
@@ -198,9 +207,9 @@ export class DeploymentStatus extends LitElement {
   private getStatusConfig() {
     const configs = {
       idle: {
-        icon: '💤',
-        title: 'Ready to Deploy',
-        message: 'Your app will be deployed here',
+        icon: '🚀',
+        title: 'Ready to Launch',
+        message: 'Your app will be deployed here when ready',
         animate: false
       },
       analyzing: {

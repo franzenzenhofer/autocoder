@@ -58,6 +58,7 @@ export class ProjectPipeline extends LitElement {
       background: #00ff41;
       color: #0a0a0a;
       animation: pulse 2s infinite;
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
     }
 
     .stage.completed .stage-icon {
@@ -100,6 +101,18 @@ export class ProjectPipeline extends LitElement {
     .ticket.in-progress {
       border-color: #00ff41;
       background: #00ff4110;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .ticket.completed {
@@ -150,6 +163,21 @@ export class ProjectPipeline extends LitElement {
       font-size: 0.75rem;
       color: #666;
     }
+
+    .progress-bar {
+      height: 4px;
+      background: #2a2a3e;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ff41 0%, #00d4ff 100%);
+      border-radius: 2px;
+      transition: width 0.5s ease-out;
+    }
   `;
 
   private stages = [
@@ -166,6 +194,8 @@ export class ProjectPipeline extends LitElement {
     return html`
       <div class="pipeline-container">
         <h3>🏗️ Build Pipeline</h3>
+        
+        ${this.renderProgressBar()}
         
         <div class="stages">
           ${this.stages.map(stage => this.renderStage(stage))}
@@ -208,6 +238,17 @@ export class ProjectPipeline extends LitElement {
           <div class="ticket-description">${ticket.description}</div>
           <div class="ticket-time">Est: ${ticket.estimatedTime} min</div>
         </div>
+      </div>
+    `;
+  }
+
+  private renderProgressBar() {
+    const currentIndex = this.stages.findIndex(s => s.id === this.status);
+    const progress = currentIndex === -1 ? 0 : ((currentIndex + 1) / this.stages.length) * 100;
+    
+    return html`
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progress}%"></div>
       </div>
     `;
   }

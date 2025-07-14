@@ -52,6 +52,7 @@ export class CodePreview extends LitElement {
 
     .tab:hover {
       color: #e0e0e0;
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .tab.active {
@@ -74,6 +75,8 @@ export class CodePreview extends LitElement {
     .preview-toggle:hover {
       background: #00ff41;
       color: #0a0a0a;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 255, 65, 0.3);
     }
 
     .content {
@@ -126,11 +129,35 @@ export class CodePreview extends LitElement {
 
     .empty-state {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100%;
       color: #666;
       font-size: 1.125rem;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .loading-indicator {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #00ff41;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .file-tree {
@@ -152,6 +179,8 @@ export class CodePreview extends LitElement {
 
     .file-item:hover {
       color: #00ff41;
+      background: rgba(0, 255, 65, 0.05);
+      padding-left: 0.5rem;
     }
 
     .file-item.selected {
@@ -194,7 +223,13 @@ export class CodePreview extends LitElement {
         <div class="content">
           ${this.files.size === 0 ? html`
             <div class="empty-state">
-              Generated code will appear here...
+              <div class="empty-state-icon">💻</div>
+              <div>
+                ${this.status === 'idle' ? 
+                  'Generated code will appear here...' : 
+                  html`<span class="loading-indicator"></span>Generating code...`
+                }
+              </div>
             </div>
           ` : this.showPreview ? this.renderPreview() : this.renderCode(fileList)}
         </div>
