@@ -7,6 +7,10 @@
 
 AutoCoder is an autonomous AI agent that transforms your app ideas into fully functional web applications. Simply describe what you want to build, and AutoCoder will handle the entire development process - from planning to deployment!
 
+## 🌐 Live Demo
+
+**Try it now:** https://shops-educational-margaret-personally.trycloudflare.com
+
 ## 🚀 Features
 
 - **🧠 AI-Powered Development**: Uses Google's Gemini AI to understand your ideas and generate production-ready code
